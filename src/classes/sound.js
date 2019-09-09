@@ -205,25 +205,30 @@ const create = () => {
 }
 const playMusic = () => {
   if (!playing) {
-    sequencer.ticker();
-    playing = true;
+    sequencer.ticker()
+    playing = true
   }
 }
 const pauseMusic = () => {
   if (playing) {
-    clearTimeout(timeout);
-    playing = false;
+    clearTimeout(timeout)
+    playing = false
   }
 };
 
 const jump = () => {
-  sounds.slider(acx.currentTime, 110, .8, 12, 1760, 1e-4, 'square');
+  sounds.slider(acx.currentTime, 110, .8, 12, 1760, 1e-4, 'square')
 };
 
 const explode = () => {
   const time = acx.currentTime;
   sounds.organic(time, 55, 5000, 1e7, 2)
-  sounds.white(time, 110, 1, 600, 4);
+  sounds.white(time, 110, 1, 600, 4)
 }
 
-export { create, jump, playMusic, pauseMusic, explode }
+const throwit = () => {
+  sounds.slider(acx.currentTime, 440, .5, 6, 220, 1e-3, 'triangle')
+  sounds.white(acx.currentTime, 440,  1, .15, 1)
+}
+
+export { create, jump, playMusic, pauseMusic, explode, throwit }
