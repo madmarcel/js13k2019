@@ -1,5 +1,6 @@
 let acx;
 let cuedTime = 0;
+let musicVolume = 1;
 const sounds = {};
 const standard = {
   crash: [.6,],
@@ -40,12 +41,12 @@ const sequencer = {
         bar ++;
       }
       cuedTime += interval;
-      const prog = (~~(bar / 4) % 4 === 0) ? bridge : standard;
+      const prog = (~~(bar / 4) % 3 === 2) ? bridge : standard;
       for (const drum of Object.keys(prog)) {
         if (rand(prog[drum][segment - 1] )) {
           if (drum === 'geet' || drum === 'mid') {
             let pitch = 55;
-            let volDivider = 30;
+            let volDivider = 30 / musicVolume;
             let duration = 1.2;
             if (bar % 4 > 2) {
               pitch = 27.5 * 1.4983070768766817;
@@ -60,8 +61,8 @@ const sequencer = {
             let pitch = 440;
             if ( segment % 2 === 0 ) { pitch = 97.998859 * 4; }
             if ( rand(.8)) { pitch = 130.81278265 * 4; }
-            sounds.organic(cuedTime, pitch, 5000, 4000, 1);
-            if (rand(.6)) { sounds.organic(cuedTime, pitch * 2, 5000, 4000, .5); }
+            sounds.organic(cuedTime, pitch, 5000, 4000, 1 * musicVolume);
+            if (rand(.6)) { sounds.organic(cuedTime, pitch * 2, 5000, 4000, .5 * musicVolume); }
           } else {
             sounds[drum](cuedTime);
           }
@@ -175,23 +176,23 @@ const create = () => {
   sounds.foot = function( time ) {
     sounds.slider( time, 90 + randSign( 5 ), .9, 1, 10, 0.001, 'sine' );
     sounds.slider( time, 160 + randSign( 15 ), .15, .8, 80, 0.001, 'triangle');
-    sounds.white( time, 1000, 2, .7, .1 );
+    sounds.white( time, 1000, 2, .7 * musicVolume * musicVolume, .1 );
   },
   sounds.hat = function( time ) {
-    sounds.white( time, 8000, .8, .5, .3 );
+    sounds.white( time, 8000, .8, .5 * musicVolume * musicVolume, .3 );
   },
   sounds.snare= function( time ) {
-    sounds.slider( time, 200 + randSign( 10 ), .1, .8, 100, 0.001, 'triangle' );
-    sounds.white( time, 2500, 1.5, 1.2, .4 );
+    sounds.slider( time, 200 + randSign( 10 ), .1, .8 * musicVolume, 100, 0.001, 'triangle' );
+    sounds.white( time, 2500, 1.5, 1.2 * musicVolume * musicVolume, .4 );
   },
   sounds.crash= function( time ) {
-    sounds.white( time, 12000, 1, .05, 1.5 );
-    sounds.white( time, 6000, 2, .06, 2 );
-    sounds.white( time, 500, 1, .04, 3 );
+    sounds.white( time, 12000, 1, .05 * musicVolume * musicVolume, 1.5 );
+    sounds.white( time, 6000, 2, .06 * musicVolume * musicVolume, 2 );
+    sounds.white( time, 500, 1, .04 * musicVolume * musicVolume, 3 );
   },
   sounds.ride = function( time ) {
-    sounds.white(  time, 5000, 2, .175, .7 );
-    sounds.white(  time, 400, .6, .05, 1 );
+    sounds.white(  time, 5000, 2, .175 * musicVolume * musicVolume, .7 );
+    sounds.white(  time, 400, .6, .05 * musicVolume * musicVolume, 1 );
   }
   sounds.geet = ( current, time, lowHz, vol ) => {
     var fifth = lowHz * 1.4983070768766817;
@@ -202,7 +203,7 @@ const create = () => {
     sounds.organic(current + gap, lowHz * 2, k, v*30, time / 1.4);
     sounds.organic(current + gap*3, lowHz * 3, k, v*8, time / 1.8);
   }
-}
+};
 const playMusic = () => {
   if (!playing) {
     sequencer.ticker()
@@ -232,10 +233,17 @@ const throwit = () => {
 }
 
 const transition = () => {
-  sounds.geet(acx.currentTime, 4, 220, .1);
-  setTimeout(() => sounds.geet(acx.currentTime, 4, 261.625565301, .08), 100);
-  setTimeout(() => sounds.geet(acx.currentTime, 4, 329.627556913, .06), 200);
-  setTimeout(() => sounds.geet(acx.currentTime, 4, 391.995435982, .04), 300);
+  sounds.geet(acx.currentTime, 4, 220, .016);
+  setTimeout(() => sounds.geet(acx.currentTime, 4, 261.625565301, .014), 100);
+  setTimeout(() => sounds.geet(acx.currentTime, 4, 329.627556913, .012), 200);
+  setTimeout(() => sounds.geet(acx.currentTime, 4, 391.995435982, .01), 300);
 }
 
-export { create, jump, playMusic, pauseMusic, explode, throwit, transition }
+const goBack = () => {
+  musicVolume = .15;
+}
+const goFront = () => {
+  musicVolume = 1;
+}
+
+export { create, jump, playMusic, pauseMusic, explode, throwit, transition, goBack, goFront }
