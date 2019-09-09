@@ -111,8 +111,11 @@ class Game {
     }
 
     drawRedRect (c) {
-        this.ctx.fillStyle = c.colour
-        this.ctx.fillRect(c.x, c.y, c.w, c.h)
+        this.ctx.globalAlpha = 0.5
+        this.ctx.strokeStyle = c.colour
+        this.ctx.lineWidth = 2
+        this.ctx.strokeRect(c.x, c.y, c.w, c.h)
+        this.ctx.globalAlpha = 1.0
     }
 
     roundToTwo (n) {

@@ -1,6 +1,7 @@
 import { timestamp, drawImage, rect } from './util'
 import { PLAYERPARTS, palette } from './data'
 import * as snd from './sound'
+import Bomb from './bomb'
 
 class Player {
     constructor(imgs, level, game) {
@@ -23,8 +24,10 @@ class Player {
         this.frame = 0
 
         this.isDead = false
-        this.ts = timestamp()
-        this.ats = timestamp()
+        let now = timestamp()
+        this.ts = now
+        this.ats = now
+        this.zts = now
         this.showBack = false
         this.showFront = false
 
@@ -53,6 +56,9 @@ class Player {
             up: false,
             down: false
         }
+
+        this.bomb = null
+        this.holding = false
     }
 
     goRight() {
@@ -152,6 +158,7 @@ class Player {
                     this.yVel = -15
                     this.jumping = true
                     this.frame = 9
+                    snd.jump()
                     setTimeout(() => {
                         self.depth = 2 // this might have to be a 1
                         if(self.level.showBack) {
@@ -196,6 +203,22 @@ class Player {
             if(k.up() && !moving) {
                 // check interactive
                 this.checkInteractive()
+            }
+
+            if(k.z()) {
+                let now = timestamp()
+                if(now > this.zts + 200) {
+                    this.zts = now
+                    if(this.holding) {
+                        snd.throwit()
+                        this.bomb.launch()
+                        this.holding = false
+                    } else {
+                        this.bomb = new Bomb(this.x, this.y, this.game, this.level, this.imgs, this)
+                        this.holding = true
+                        this.level.bombs.push(this.bomb)
+                    }
+                }
             }
         }
 
@@ -320,6 +343,10 @@ class Player {
         this.locked = false
         this.showBack = false
         this.showFront = false
+    }
+
+    kaboom() {
+        snd.explode()
     }
 }
 

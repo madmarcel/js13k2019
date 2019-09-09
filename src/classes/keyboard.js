@@ -47,6 +47,10 @@ class Keyboarder {
         return this.isDown(this.KEYS.UP)
     }
 
+    z() {
+        return this.isDown(this.KEYS.Z)
+    }
+
     isDown(key) {
         return this.keyState['' + key] === true
     }

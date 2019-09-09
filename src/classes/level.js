@@ -17,6 +17,7 @@ class Level {
         this.u = null
         this.isBuilding = false
         this.loading = false
+        this.bombs = []
         this.build()
     }
 
@@ -138,6 +139,12 @@ class Level {
         this.pfs.forEach(p => {
             p.update()
         })
+
+        this.bombs = this.bombs.filter(b => !b.isDone())
+
+        for(let b = 0; b < this.bombs.length; b++) {
+            this.bombs[b].update()
+        }
         //this.viewport.update()
     }
 
@@ -197,6 +204,10 @@ class Level {
                 if(player && player.depth === j) {
                     player.render(c)
                 }
+            }
+
+            for(let b = 0; b < this.bombs.length; b++) {
+                this.bombs[b].render(c)
             }
 
             this.rects.forEach(r => {

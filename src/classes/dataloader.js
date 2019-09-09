@@ -1,5 +1,5 @@
 import * as vg from './mv.js'
-import { imagedata, palette, PLAYERPARTS } from './data'
+import { imagedata, palette, PLAYERPARTS, BOMBSTART } from './data'
 import * as util from './util'
 
 const createCanvas = (w, h) => {
@@ -114,6 +114,43 @@ const generateLens = (images) => {
     }
     //console.log(images.length)
 
+    return generateBombs(images)
+}
+
+const generateBombs = (images) => {
+
+    const BOMB_GREEN = [ images[36], images[37], images[38] ]
+
+    const SPARKS = [ images[39], images[40], images[41] ]
+
+    let spc = 0
+    let yoffset = 10
+    let inc = 15 / 40
+    let gc = 0
+
+    const w = 100
+    const h = 100
+    for(let i = 0; i < 40; i++) {
+        let [el, cv] = createCanvas(w,h)
+        // draw fuse
+
+        util.drawImage(el, BOMB_GREEN[gc], 50, 50, BOMB_GREEN[gc].width, BOMB_GREEN[gc].height, 0, false, false, true)
+        let r = Math.random() * 180
+        util.drawImage(el, SPARKS[spc], 50, yoffset, SPARKS[spc].width, SPARKS[spc].height, r, false, false, true)
+        images.push(cv)
+
+        spc++
+        if(spc > 2) {
+            spc = 0
+        }
+        yoffset += inc
+        if(i > 30) {
+            gc++
+            if(gc > 2) {
+                gc = 0
+            }
+        }
+    }
     return images
 }
 

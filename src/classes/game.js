@@ -1,5 +1,4 @@
 import { leveldata, LENSSTART } from './data'
-// import { say, findVoice } from './voice'
 import Level from './level'
 import { generateImages } from './dataloader'
 import { fsrect, text, rect, timestamp, drawImage } from './util'
@@ -119,9 +118,7 @@ class Game {
             this.level = new Level(leveldata[nextLevel], images, false)
             //this.level.startLoad()
             snd.create()
-            snd.playMusic()
-
-
+            //snd.playMusic()
         }
     }
 
