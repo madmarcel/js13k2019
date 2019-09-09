@@ -1,0 +1,10 @@
+{
+  "extends": "standard",
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "no-return-assign": "off",
+    "indent": ["error", 4]
+  }
+}
