@@ -231,4 +231,11 @@ const throwit = () => {
   sounds.white(acx.currentTime, 440,  1, .15, 1)
 }
 
-export { create, jump, playMusic, pauseMusic, explode, throwit }
+const transition = () => {
+  sounds.geet(acx.currentTime, 4, 220, .1);
+  setTimeout(() => sounds.geet(acx.currentTime, 4, 261.625565301, .08), 100);
+  setTimeout(() => sounds.geet(acx.currentTime, 4, 329.627556913, .06), 200);
+  setTimeout(() => sounds.geet(acx.currentTime, 4, 391.995435982, .04), 300);
+}
+
+export { create, jump, playMusic, pauseMusic, explode, throwit, transition }
