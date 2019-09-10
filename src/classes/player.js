@@ -147,18 +147,24 @@ class Player {
         let r = this.level.interactive
         for(let i = 0; i < r.length; i++) {
             r[i].x = r[i].ox + this.level.viewport.x
-            if (this.overlapTest(c, r[i])) {
+            if (this.overlapTest(c, r[i]) && this.imgs[r[i].t]['v']) {
 
                 this.x = r[i].mx - 26 + this.level.viewport.x
                 this.xVel = 0
                 this.ts = timestamp()
                 let self = this
-                if(r[i].t > 14) {
+                if(r[i].t > 14 && r[i].t < 46) {
                     this.locked = true
                     this.yVel = -15
                     this.jumping = true
                     this.frame = 9
                     snd.jump()
+                    if(self.level.showBack) {
+                        snd.goFront()
+                    } else {
+                        snd.goBack()
+                    }
+
                     setTimeout(() => {
                         self.depth = 2 // this might have to be a 1
                         if(self.level.showBack) {

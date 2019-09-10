@@ -2,12 +2,13 @@ import ParticleField from './particlefield'
 import { jsonCopy, fsrect, rect } from './util'
 import { INTERACTIVES, DOOR, TATTYBUSH, BUSH, FGTREE, palette, PLAYERPARTS } from './data';
 import Viewport from './viewport'
+import BombRevealTrigger from './bombrevealtrigger';
 
 class Level {
     constructor(d, imgs, back) {
         this.d = jsonCopy(d)
 
-        this.imgs = imgs
+        this.imgs = [].concat(imgs)
         this.enemies = []
         this.rects = []
         this.pfs = []
@@ -18,6 +19,12 @@ class Level {
         this.isBuilding = false
         this.loading = false
         this.bombs = []
+        this.bombtargets = []
+
+        this.imgs.forEach(i => {
+            i['v'] = true
+        })
+
         this.build()
     }
 
@@ -78,9 +85,8 @@ class Level {
             // tatty bush / object
             let p = this.d.i[5]
             if(INTERACTIVES.includes(p[fg])) {
-            //if(p[fg] === 17 || p[fg] === 18 || p[fg] === 11) {
                 // there are no doors at the back
-                if(this.showBack && p[fg] === DOOR) break;
+                if(this.showBack && (p[fg] === DOOR || p[fg] === HOLEINWALL)) break;
                 this.interactive.push(
                     {
                         ox: p[fg + 1] - this.imgs[p[fg]].width / 2 + 20,
@@ -131,6 +137,42 @@ class Level {
                 })
             })
         }
+
+        // triggers
+        if(this.d.t) {
+            let getImgRect = (x, y, i, no) => {
+                return {
+                    x: x,
+                    y: y,
+                    w: i[no].width,
+                    h: i[no].height
+                }
+            }
+
+            for(let i = 0; i < this.d.t.length; i += 5) {
+                let tdef = this.d.t
+                if(tdef[i] === 0) {
+                    // bomb reveal trigger
+                    // find target
+
+                    let tlevel = tdef[i + 1]
+                    let ttarget = tdef[i + 2]
+
+                    let ti = this.d.i[tlevel][ttarget * 4]
+                    let tx = this.d.i[tlevel][(ttarget * 4) + 1]
+                    let ty = this.d.i[tlevel][(ttarget * 4) + 2]
+
+                    let rlevel = tdef[i + 3]
+                    let rtarget = tdef[i + 4]
+
+                    let ri = this.d.i[rlevel][rtarget * 4]
+
+                    // add to bombtargets
+                    this.bombtargets.push(new BombRevealTrigger(getImgRect(tx, ty, this.imgs, ti), this.imgs, ti, ri))
+                }
+            }
+        }
+
         this.viewport = new Viewport(this.d.v[0], this.d.v[1])
         this.isBuilding = false
     }
@@ -150,6 +192,9 @@ class Level {
 
     draw(c, i, x, y) {
         if(!i) return
+        if(!i['v']) {
+            return
+        }
         c.drawImage(i, x - i.width * 0.5, y, i.width, i.height)
     }
 
@@ -219,6 +264,15 @@ class Level {
                 c.strokeStyle = 'yellow'
                 c.strokeRect(r.x, r.y, r.w, r.h)
             })
+        }
+    }
+
+    explosion(rect) {
+        //rect.ox = rect.x
+        //this.rects.push(rect)
+
+        for(let i = 0; i < this.bombtargets.length; i++) {
+            this.bombtargets[i].check(rect)
         }
     }
 }

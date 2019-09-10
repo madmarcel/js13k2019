@@ -56,6 +56,11 @@ class Bomb {
             o = this.level.viewport.x
         }
         drawImage(c, a, this.x + o, this.y, a.width, a.height, this.angle, this.flipX, false, true)
+
+        this.level.rects.forEach(r => {
+            c.strokeStyle = 'orange'
+            c.strokeRect(r.x, r.y, r.w, r.h)
+        })
     }
 
     update() {
@@ -170,6 +175,14 @@ class Bomb {
                     this.yVel = -6
                     // kaboom
                     this.player.kaboom()
+                    let px = (this.x) // + this.level.viewport.x)
+                    let py = this.y
+                    this.level.explosion({
+                        x: px - 60,
+                        y: py - 60,
+                        w: 120,
+                        h: 120
+                    })
                 }
             } else {
                 this.visible = false
@@ -201,7 +214,7 @@ class Bomb {
         // Move rectangle along x axis
         for (let i = 0; i < rects.length; i++) {
             let c = this.getRect(p, vx, 0) //{ x: p.x + vx, y: p.y, w: p.w, h: p.h }
-            rects[i].x = Math.floor(rects[i].ox + this.level.viewport.x)
+            rects[i].x = Math.floor(rects[i].ox)
             if (this.overlapTest(c, rects[i])) {
                 if (vx < 0) {
                     vx = rects[i].x + rects[i].w - p.x
@@ -211,6 +224,12 @@ class Bomb {
                     this.blocked.right = true
                 }
             }
+        }
+        if(vx > 10) {
+            vx = 10
+        }
+        if(vx < -10) {
+            vx = -10
         }
         this.xVel = vx
         p.x += vx
@@ -227,6 +246,12 @@ class Bomb {
                     this.blocked.down = true
                 }
             }
+        }
+        if(vy > 10) {
+            vy = 10
+        }
+        if(vy < -10) {
+            vy = -10
         }
         this.yVel = vy
         p.y += vy

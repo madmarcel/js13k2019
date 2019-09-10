@@ -119,6 +119,7 @@ class Game {
             //this.level.startLoad()
             snd.create()
             //snd.playMusic()
+            //snd.goFront()
         }
     }
 

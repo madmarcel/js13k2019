@@ -1,3 +1,9 @@
+const WAVES = {
+  TRIANGLE: 'triangle',
+  SINE: 'sine',
+  SQUARE: 'square'
+}
+
 let acx;
 let cuedTime = 0;
 let musicVolume = 1;
@@ -33,7 +39,7 @@ const sequencer = {
     if (!acx) {
       return;
     }
-    timeout = window.setTimeout(sequencer.ticker, 250);
+    timeout = setTimeout(sequencer.ticker, 250);
     const end = acx.currentTime + 1;
     while(cuedTime < end) {
       if (++segment > segments) {
@@ -174,15 +180,15 @@ const create = () => {
     }, 1000 + Math.round(length * 1000));
   }
   sounds.foot = function( time ) {
-    sounds.slider( time, 90 + randSign( 5 ), .9, 1, 10, 0.001, 'sine' );
-    sounds.slider( time, 160 + randSign( 15 ), .15, .8, 80, 0.001, 'triangle');
+    sounds.slider( time, 90 + randSign( 5 ), .9, 1, 10, 0.001, WAVES.SINE );
+    sounds.slider( time, 160 + randSign( 15 ), .15, .8, 80, 0.001, WAVES.TRIANGLE);
     sounds.white( time, 1000, 2, .7 * musicVolume * musicVolume, .1 );
   },
   sounds.hat = function( time ) {
     sounds.white( time, 8000, .8, .5 * musicVolume * musicVolume, .3 );
   },
   sounds.snare= function( time ) {
-    sounds.slider( time, 200 + randSign( 10 ), .1, .8 * musicVolume, 100, 0.001, 'triangle' );
+    sounds.slider( time, 200 + randSign( 10 ), .1, .8 * musicVolume, 100, 0.001, WAVES.TRIANGLE);
     sounds.white( time, 2500, 1.5, 1.2 * musicVolume * musicVolume, .4 );
   },
   sounds.crash= function( time ) {
@@ -218,17 +224,17 @@ const pauseMusic = () => {
 };
 
 const jump = () => {
-  sounds.slider(acx.currentTime, 110, .8, 12, 1760, 1e-4, 'square')
+  sounds.slider(acx.currentTime, 110, .8, 12, 1760, 1e-4, WAVES.SQUARE)
 };
 
 const explode = () => {
   const time = acx.currentTime;
-  sounds.organic(time, 55, 5000, 1e7, 2)
-  sounds.white(time, 110, 1, 600, 4)
+  sounds.organic(time, 55, 5000, 1e7, 1)
+  sounds.white(time, 110, 1, 600, 2)
 }
 
 const throwit = () => {
-  sounds.slider(acx.currentTime, 440, .5, 6, 220, 1e-3, 'triangle')
+  sounds.slider(acx.currentTime, 440, .5, 6, 220, 1e-3, WAVES.TRIANGLE)
   sounds.white(acx.currentTime, 440,  1, .15, 1)
 }
 
@@ -240,10 +246,10 @@ const transition = () => {
 }
 
 const goBack = () => {
-  musicVolume = .15;
+  musicVolume = .2;
 }
 const goFront = () => {
-  musicVolume = 1;
+  musicVolume = .6;
 }
 
 export { create, jump, playMusic, pauseMusic, explode, throwit, transition, goBack, goFront }

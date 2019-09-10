@@ -136,5 +136,9 @@ const jsonCopy = (src) => {
     return JSON.parse(JSON.stringify(src))
 }
 
+const overlapTest = (a, b) => {
+    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
+}
 
-export { rect, fsrect, contains, text, drawImage, overlaps, timestamp, randomint, rad, drawImage2, jsonCopy }
+
+export { rect, fsrect, contains, text, drawImage, overlaps, timestamp, randomint, rad, drawImage2, jsonCopy, overlapTest }
