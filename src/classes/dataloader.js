@@ -151,6 +151,26 @@ const generateBombs = (images) => {
             }
         }
     }
+    //console.log(images.length)
+    return generateSigns(images)
+}
+
+const generateSigns = (images) => {
+    const w = 100
+    const h = 100
+    let im = images[49]
+    for(let i = 1; i < 10; i++) {
+        let [el, cv] = createCanvas(w,h)
+        util.drawImage(el, im, 50, 50, im.width, im.height, 0, false, false, true)
+        util.text(el, '' + i, 38, 72, palette[4], 42)
+
+        let [el2, cv2] = createCanvas(w,h)
+        let r = Math.floor((Math.random() * 14) + -7)
+        util.drawImage(el2, cv, 50, 50, el2.width, el2.height, 5, false, false, true)
+
+        images.push(cv2)
+    }
+    console.log(images.length)
     return images
 }
 

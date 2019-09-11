@@ -339,6 +339,11 @@ class Player {
         /*c.strokeStyle = 'white'
         let r = this.getRect(this, 0, 0)
         c.strokeRect(r.x, r.y, r.w, r.h)*/
+
+        /*for(let sx = 0; sx < 9; sx++) {
+            let i = this.imgs[197 + sx]
+            drawImage(c, i, this.x + (sx * 100), this.y - 100, i.width, i.height, 0, false, false, true)
+        }*/
     }
 
     overlapTest(a, b) {

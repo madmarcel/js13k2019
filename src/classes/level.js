@@ -1,6 +1,6 @@
 import ParticleField from './particlefield'
 import { jsonCopy, fsrect, rect } from './util'
-import { INTERACTIVES, DOOR, TATTYBUSH, BUSH, FGTREE, palette, HOLEINWALL } from './data';
+import { INTERACTIVES, DOOR, TATTYBUSH, BUSH, FGTREE, palette, LOCKEDDOOR } from './data';
 import Viewport from './viewport'
 import BombRevealTrigger from './bombrevealtrigger';
 
@@ -86,7 +86,19 @@ class Level {
             let p = this.d.i[5]
             if(INTERACTIVES.includes(p[fg])) {
                 // there are no doors at the back
-                if(this.showBack && (p[fg] === DOOR || p[fg] === HOLEINWALL)) break;
+                if(this.showBack && (p[fg] === DOOR || p[fg] === LOCKEDDOOR)) {
+                    // create sign for on the door
+                    let si = 195 + p[fg + 3]
+                    this.d.i[5] = this.d.i[5].concat(
+                        si,
+                        p[fg + 1],
+                        p[fg + 2],
+                        0
+                    )
+                }
+                // locked door does nothing
+                if(!this.showBack && p[fg] === LOCKEDDOOR) continue;
+                if(this.showBack && (p[fg] !== TATTYBUSH)) continue;
                 this.interactive.push(
                     {
                         ox: p[fg + 1] - this.imgs[p[fg]].width / 2 + 20,
@@ -235,6 +247,9 @@ class Level {
                     }
                     if(id > 9) {
                         o = 1
+                    }
+                    if(id === LOCKEDDOOR) {
+                        o = 12 - id + 1
                     }
                     if(id < 2 || id > 9) {
                         this.draw(c, this.imgs[id + o], z[bg + 1] + this.viewport.x, z[bg + 2])
