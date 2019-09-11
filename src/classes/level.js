@@ -1,6 +1,6 @@
 import ParticleField from './particlefield'
 import { jsonCopy, fsrect, rect } from './util'
-import { INTERACTIVES, DOOR, TATTYBUSH, BUSH, FGTREE, palette, LOCKEDDOOR } from './data';
+import { INTERACTIVES, DOOR, TATTYBUSH, BUSH, FGTREE, palette, LOCKEDDOOR, SIGNSTART } from './data';
 import Viewport from './viewport'
 import BombRevealTrigger from './bombrevealtrigger';
 
@@ -88,7 +88,7 @@ class Level {
                 // there are no doors at the back
                 if(this.showBack && (p[fg] === DOOR || p[fg] === LOCKEDDOOR)) {
                     // create sign for on the door
-                    let si = 195 + p[fg + 3]
+                    let si = SIGNSTART - 2 + p[fg + 3]
                     this.d.i[5] = this.d.i[5].concat(
                         si,
                         p[fg + 1],

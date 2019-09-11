@@ -304,7 +304,11 @@ class Player {
             yoff = 58
         }
 
-        let i = this.imgs[f]
+        let aoffset = 0
+        if(this.holding) {
+            aoffset = 20
+        }
+        let i = this.imgs[f + aoffset]
         drawImage(c, i, this.x + 26, this.y + yoff, i.width, i.height, 0, this.flipX, false, true)
         if(this.showFront) {
             // draw the front face on top

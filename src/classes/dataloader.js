@@ -87,6 +87,44 @@ const generateAnimations = (images) => {
             yinc = -0.25
         }
     }
+
+    larm_arc = -125
+    rarm_arc = 65
+    larm_arc_inc = 0
+
+    lleg_arc = 85
+    rleg_arc = -85
+
+    yoff = -1
+    toff = -4
+    tinc = 0.5
+    yinc = 0.25
+
+    // and again for holding the bomb
+    for(let f = 0; f < TOTALFRAMES * 2; f++) {
+        let [el, cv] = createCanvas(130, 170)
+        util.drawImage(el, ARM, 130 / 2 + 22, (170 / 2) + 32 + yoff + toff, ARM.width, ARM.height, rarm_arc, false, false, true) // right arm
+
+        util.drawImage(el, LEG, 130 / 2 + 10, (170 / 2) + 50 + toff, LEG.width, LEG.height, rleg_arc, false, false, true) // right leg
+        util.drawImage(el, LEG, 130 / 2 - 10, (170 / 2) + 50 + toff, LEG.width, LEG.height, lleg_arc, false, false, true) // left leg
+
+        util.drawImage(el, BODY, 130 / 2, (170 / 2) + yoff + toff, BODY.width, BODY.height, 0, false, false, true)
+        util.drawImage(el, HEAD, 130 / 2, (170 / 2) + 16 + yoff + toff, HEAD.width, HEAD.height, 0, false, false, true)
+        util.drawImage(el, ARM, 130 / 2 - 24, (170 / 2) + 32 + yoff + toff, ARM.width, ARM.height, larm_arc, false, false, true) // left arm
+        images.push(cv)
+
+        larm_arc += larm_arc_inc
+        rarm_arc += rarm_arc_inc
+        lleg_arc += lleg_arc_inc
+        rleg_arc += rleg_arc_inc
+        yoff += yinc
+        toff += tinc
+        if(f == 6) { // reverse the body/head/arm bob
+            tinc = -0.5
+            yinc = -0.25
+        }
+    }
+
     return generateLens(images)
 }
 
