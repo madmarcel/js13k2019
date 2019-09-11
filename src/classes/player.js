@@ -1,5 +1,5 @@
-import { timestamp, drawImage, rect } from './util'
-import { PLAYERPARTS, palette } from './data'
+import { timestamp, drawImage } from './util'
+import { PLAYERPARTS, palette, BOMBSTART, SIGNSTART } from './data'
 import * as snd from './sound'
 import Bomb from './bomb'
 
@@ -28,6 +28,7 @@ class Player {
         this.ts = now
         this.ats = now
         this.zts = now
+        this.xts = now
         this.showBack = false
         this.showFront = false
 
@@ -59,6 +60,9 @@ class Player {
 
         this.bomb = null
         this.holding = false
+
+        this.inventory = [ BOMBSTART, SIGNSTART, SIGNSTART + 1 ]
+        this.selected = 0
     }
 
     goRight() {
@@ -213,16 +217,35 @@ class Player {
 
             if(k.z()) {
                 let now = timestamp()
-                if(now > this.zts + 200) {
+                if(now > this.zts + 300) {
                     this.zts = now
-                    if(this.holding) {
-                        snd.throwit()
-                        this.bomb.launch()
-                        this.holding = false
-                    } else {
-                        this.bomb = new Bomb(this.x, this.y, this.game, this.level, this.imgs, this)
-                        this.holding = true
-                        this.level.bombs.push(this.bomb)
+                    if(this.selected === 0) {
+                        if(this.holding) {
+                            snd.throwit()
+                            this.bomb.launch()
+                            this.holding = false
+                        } else {
+                            this.bomb = new Bomb(this.x, this.y, this.game, this.level, this.imgs, this)
+                            this.holding = true
+                            this.level.bombs.push(this.bomb)
+                        }
+                    }
+                }
+            }
+            if(k.x()) {
+                let now = timestamp()
+                if(now > this.xts + 300) {
+                    this.xts = now
+                    this.selected += 1
+                    if(this.selected === 1) {
+                        if(this.holding) {
+                            snd.throwit()
+                            this.bomb.launch()
+                            this.holding = false
+                        }
+                    }
+                    if(this.selected > this.inventory.length - 1) {
+                        this.selected = 0
                     }
                 }
             }
@@ -362,6 +385,29 @@ class Player {
 
     kaboom() {
         snd.explode()
+    }
+
+    renderGUI(c) {
+        c.strokeStyle = palette[1]
+        c.lineWidth = 4
+        let m = 1360 / 2
+        let xs = m - this.selected * 90
+        c.globalAlpha = 0.2
+        let yoff = 0
+        for(let i = 0; i < this.inventory.length; i++) {
+            if(this.selected === i) {
+                c.globalAlpha = 1.0
+                c.strokeRect(xs + 10 + (i * 90), 30, 80, 80)
+            }
+            let j = this.imgs[this.inventory[i]]
+            if(i > 0) {
+                yoff = -5
+            }
+            drawImage(c, j, xs + i * 90, 35 + yoff, j.width, j.height, 0, false, false, false)
+            c.globalAlpha = 0.2
+            yoff = 0
+        }
+        c.globalAlpha = 1.0
     }
 }
 

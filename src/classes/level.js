@@ -270,6 +270,10 @@ class Level {
                 this.bombs[b].render(c)
             }
 
+            if(player) {
+                player.renderGUI(c)
+            }
+
             /*this.rects.forEach(r => {
                 c.strokeStyle = 'red'
                 c.strokeRect(r.x, r.y, r.w, r.h)

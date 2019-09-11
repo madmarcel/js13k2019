@@ -98,7 +98,6 @@ class Game {
                 text(c, 'Behind the Scenery', 1366/2 - 100, 768/2 - 170, '#f5edba', 32)
                 text(c, 'by madmarcel for js13k 2019', 1366/2 - 60, 768/2 - 140, '#f5edba', 16)
                 text(c, 'music and sfx by justinfunstain', 1366/2 - 60, 768/2 - 110, '#f5edba', 16)
-                text(c, 'gamepad supported', 1366/2 - 20, 768/2 - 80, '#f5edba', 16)
                 text(c, 'press any key to start', 1366/2 - 60, 768/2, '#f5edba', 28)
             break
             case STATE.PLAY:
