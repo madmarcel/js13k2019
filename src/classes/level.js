@@ -1,6 +1,6 @@
 import ParticleField from './particlefield'
 import { jsonCopy, fsrect, rect } from './util'
-import { INTERACTIVES, DOOR, TATTYBUSH, BUSH, FGTREE, palette, PLAYERPARTS } from './data';
+import { INTERACTIVES, DOOR, TATTYBUSH, BUSH, FGTREE, palette, HOLEINWALL } from './data';
 import Viewport from './viewport'
 import BombRevealTrigger from './bombrevealtrigger';
 
@@ -255,7 +255,7 @@ class Level {
                 this.bombs[b].render(c)
             }
 
-            this.rects.forEach(r => {
+            /*this.rects.forEach(r => {
                 c.strokeStyle = 'red'
                 c.strokeRect(r.x, r.y, r.w, r.h)
             })
@@ -263,7 +263,7 @@ class Level {
             this.interactive.forEach(r => {
                 c.strokeStyle = 'yellow'
                 c.strokeRect(r.x, r.y, r.w, r.h)
-            })
+            })*/
         }
     }
 

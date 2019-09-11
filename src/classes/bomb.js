@@ -175,7 +175,10 @@ class Bomb {
                     this.yVel = -6
                     // kaboom
                     this.player.kaboom()
-                    let px = (this.x) // + this.level.viewport.x)
+
+                }
+                if(this.frame === this.animations.length - 3 ) {
+                    let px = this.x
                     let py = this.y
                     this.level.explosion({
                         x: px - 60,

@@ -336,9 +336,9 @@ class Player {
             }
         }
 
-        c.strokeStyle = 'white'
+        /*c.strokeStyle = 'white'
         let r = this.getRect(this, 0, 0)
-        c.strokeRect(r.x, r.y, r.w, r.h)
+        c.strokeRect(r.x, r.y, r.w, r.h)*/
     }
 
     overlapTest(a, b) {
