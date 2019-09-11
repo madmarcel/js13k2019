@@ -36,7 +36,7 @@ class Game {
        let self = this
        setTimeout(() => {
             images = generateImages()
-            const startlevel = 0
+            const startlevel = 4
             self.level = new Level(leveldata[startlevel], images, false)
             self.state = STATE.TITLE
        }, 25)

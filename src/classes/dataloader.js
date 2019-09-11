@@ -204,11 +204,11 @@ const generateSigns = (images) => {
 
         let [el2, cv2] = createCanvas(w,h)
         let r = Math.floor((Math.random() * 14) + -7)
-        util.drawImage(el2, cv, 50, 50, el2.width, el2.height, 5, false, false, true)
+        util.drawImage(el2, cv, 50, 50, el2.width, el2.height, r, false, false, true)
 
         images.push(cv2)
     }
-    console.log(images.length)
+    //console.log(images.length)
     return images
 }
 

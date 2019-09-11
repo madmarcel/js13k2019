@@ -392,6 +392,7 @@ class Player {
         c.lineWidth = 4
         let m = 1360 / 2
         let xs = m - this.selected * 90
+
         c.globalAlpha = 0.2
         let yoff = 0
         for(let i = 0; i < this.inventory.length; i++) {
@@ -403,6 +404,9 @@ class Player {
             if(i > 0) {
                 yoff = -5
             }
+            /*if(i !== this.selected) {
+                yoff += 15
+            }*/
             drawImage(c, j, xs + i * 90, 35 + yoff, j.width, j.height, 0, false, false, false)
             c.globalAlpha = 0.2
             yoff = 0

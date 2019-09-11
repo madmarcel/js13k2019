@@ -57,10 +57,10 @@ class Bomb {
         }
         drawImage(c, a, this.x + o, this.y, a.width, a.height, this.angle, this.flipX, false, true)
 
-        this.level.rects.forEach(r => {
+        /*this.level.rects.forEach(r => {
             c.strokeStyle = 'orange'
             c.strokeRect(r.x, r.y, r.w, r.h)
-        })
+        })*/
     }
 
     update() {
