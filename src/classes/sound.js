@@ -1,7 +1,8 @@
 const WAVES = {
   TRIANGLE: 'triangle',
   SINE: 'sine',
-  SQUARE: 'square'
+  SQUARE: 'square',
+  SAWTOOTH: 'sawtooth'
 }
 
 let acx;
@@ -179,24 +180,24 @@ const create = () => {
       noise.disconnect()
     }, 1000 + Math.round(length * 1000));
   }
-  sounds.foot = function( time ) {
+  sounds.foot = time => {
     sounds.slider( time, 90 + randSign( 5 ), .9, 1, 10, 0.001, WAVES.SINE );
     sounds.slider( time, 160 + randSign( 15 ), .15, .8, 80, 0.001, WAVES.TRIANGLE);
     sounds.white( time, 1000, 2, .7 * musicVolume * musicVolume, .1 );
   },
-  sounds.hat = function( time ) {
+  sounds.hat = time => {
     sounds.white( time, 8000, .8, .5 * musicVolume * musicVolume, .3 );
   },
-  sounds.snare= function( time ) {
+  sounds.snare = time => {
     sounds.slider( time, 200 + randSign( 10 ), .1, .8 * musicVolume, 100, 0.001, WAVES.TRIANGLE);
     sounds.white( time, 2500, 1.5, 1.2 * musicVolume * musicVolume, .4 );
   },
-  sounds.crash= function( time ) {
+  sounds.crash = time => {
     sounds.white( time, 12000, 1, .05 * musicVolume * musicVolume, 1.5 );
     sounds.white( time, 6000, 2, .06 * musicVolume * musicVolume, 2 );
     sounds.white( time, 500, 1, .04 * musicVolume * musicVolume, 3 );
   },
-  sounds.ride = function( time ) {
+  sounds.ride = time => {
     sounds.white(  time, 5000, 2, .175 * musicVolume * musicVolume, .7 );
     sounds.white(  time, 400, .6, .05 * musicVolume * musicVolume, 1 );
   }
@@ -246,10 +247,40 @@ const transition = () => {
 }
 
 const goBack = () => {
-  musicVolume = .2;
+  musicVolume = .18;
 }
 const goFront = () => {
-  musicVolume = .6;
+  musicVolume = .8;
 }
 
-export { create, jump, playMusic, pauseMusic, explode, throwit, transition, goBack, goFront }
+const testSounds = {
+  crunch: () => {
+    sounds.white(acx.currentTime, 100, 1, 12000, .3);
+    sounds.white(acx.currentTime, 6000, 1, 8000, .1);  
+  },
+  blup: () => {
+    sounds.slider(acx.currentTime, 440, .4, 6, 600, 1e-6, WAVES.SQUARE);
+    () => sounds.slider(acx.currentTime, 880, .2, 6, 600, 1, WAVES.SAWTOOTH);
+  },
+  wheep: () => {
+    sounds.slider(acx.currentTime, 880, .6, 6, 1760, .2, WAVES.TRIANGLE);
+  },
+  nah: () => {
+    sounds.slider(acx.currentTime, 110, .1, 6, 110, .2, WAVES.SAWTOOTH);
+  },
+  nahnah: () => {
+    testSounds.nah();
+    setTimeout(testSounds.nah, 140);
+  },
+  touch: () => {
+    sounds.white(acx.currentTime, 880, 1, 16000, .15);
+  }
+}
+
+const splat = () => {
+  sounds.slider(acx.currentTime, 55, .5, 200, 110, 1e-3, WAVES.SINE);
+  sounds.white(acx.currentTime, 500, 1, 12000, .8);
+  sounds.white(acx.currentTime, 6000, 1, 8000, .2);
+}
+
+export { create, jump, playMusic, pauseMusic, explode, throwit, transition, goBack, goFront, splat, testSounds }

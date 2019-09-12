@@ -84,7 +84,9 @@ class Player {
             this.yVel -= 3.5
         } else {
             this.jumping = true
-            snd.jump()
+            //snd.jump()
+            const fx = Object.values(snd.testSounds);
+            fx[~~(Math.random() * fx.length)]();
         }
     }
 
@@ -390,7 +392,7 @@ class Player {
     }
 
     splat() {
-
+        snd.splat()
     }
 
     renderGUI(c) {
