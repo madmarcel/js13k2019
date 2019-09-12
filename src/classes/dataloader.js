@@ -157,39 +157,54 @@ const generateLens = (images) => {
 
 const generateBombs = (images) => {
 
-    const BOMB_GREEN = [ images[36], images[37], images[38] ]
+    let BOMB_GREEN = [ images[36], images[37], images[38] ]
 
     const SPARKS = [ images[39], images[40], images[41] ]
 
-    let spc = 0
-    let yoffset = 10
-    let inc = 15 / 40
-    let gc = 0
+    for(let m = 0; m < 2; m++) {
+        let spc = 0
+        let yoffset = 10
+        let inc = 15 / 40
+        let gc = 0
 
-    const w = 100
-    const h = 100
-    for(let i = 0; i < 40; i++) {
-        let [el, cv] = createCanvas(w,h)
-        // draw fuse
+        const w = 100
+        const h = 100
+        for(let i = 0; i < 40; i++) {
+            let [el, cv] = createCanvas(w,h)
+            // draw fuse
 
-        util.drawImage(el, BOMB_GREEN[gc], 50, 50, BOMB_GREEN[gc].width, BOMB_GREEN[gc].height, 0, false, false, true)
-        let r = Math.random() * 180
-        util.drawImage(el, SPARKS[spc], 50, yoffset, SPARKS[spc].width, SPARKS[spc].height, r, false, false, true)
-        images.push(cv)
+            util.drawImage(el, BOMB_GREEN[gc], 50, 50, BOMB_GREEN[gc].width, BOMB_GREEN[gc].height, 0, false, false, true)
+            let r = Math.random() * 180
+            util.drawImage(el, SPARKS[spc], 50, yoffset, SPARKS[spc].width, SPARKS[spc].height, r, false, false, true)
+            images.push(cv)
 
-        spc++
-        if(spc > 2) {
-            spc = 0
-        }
-        yoffset += inc
-        if(i > 30) {
-            gc++
-            if(gc > 2) {
-                gc = 0
+            spc++
+            if(spc > 2) {
+                spc = 0
+            }
+            yoffset += inc
+            if(i > 30) {
+                gc++
+                if(gc > 2) {
+                    gc = 0
+                }
             }
         }
+
+        // and we do it again, this time generating blue bombs
+        let d2 = imagedata
+        let i2 = 36 * 3
+        let w2 = d2[i2]
+        let h2 = d2[i2 + 1]
+        let r2 = d2[i2 + 2]
+        // replace some colours
+        r2 = vg.replaceItem('9', '14', r2)
+        r2 = vg.replaceItem('10', '15', r2)
+
+        let [img, cv] = createCanvas(w2,h2)
+        vg.vgrender(img, r2)
+        BOMB_GREEN[0] = cv
     }
-    //console.log(images.length)
     return generateSigns(images)
 }
 
@@ -197,7 +212,7 @@ const generateSigns = (images) => {
     const w = 100
     const h = 100
     let im = images[49]
-    for(let i = 1; i < 10; i++) {
+    for(let i = 0; i < 10; i++) {
         let [el, cv] = createCanvas(w,h)
         util.drawImage(el, im, 50, 50, im.width, im.height, 0, false, false, true)
         util.text(el, '' + i, 38, 72, palette[4], 42)
@@ -209,6 +224,24 @@ const generateSigns = (images) => {
         images.push(cv2)
     }
     //console.log(images.length)
+    return generateSplat(images)
+}
+
+const generateSplat = (images) => {
+    for(let m = 0; m < 2; m++) {
+        let d2 = imagedata
+        let i2 = (45 + m) * 3
+        let w2 = d2[i2]
+        let h2 = d2[i2 + 1]
+        let r2 = d2[i2 + 2]
+        // replace some colours
+        r2 = vg.replaceItem('3', '14', r2)
+
+        let [img, cv] = createCanvas(w2,h2)
+        vg.vgrender(img, r2)
+        images.push(cv)
+    }
+
     return images
 }
 

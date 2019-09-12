@@ -303,4 +303,9 @@ const vgrender = (newctx, data) => {
     processCommands(commands, false, 0, false, 0, 0)
 }
 
-export { vgrender, setPallete }
+const replaceItem = (txt, target, sentence) => {
+    const reg = new RegExp(`k,${txt}`, 'gi')
+    return sentence.replace(reg, `k,${target}`)
+}
+
+export { vgrender, setPallete, replaceItem }

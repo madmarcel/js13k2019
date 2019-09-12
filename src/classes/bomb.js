@@ -1,5 +1,5 @@
 import { timestamp, drawImage } from './util'
-import { BOMBSTART } from './data'
+import { BOMBSTART, SPLATSTART } from './data'
 
 const BOMB = {
     HELD: 0,
@@ -8,7 +8,7 @@ const BOMB = {
 }
 
 class Bomb {
-    constructor(x, y, game, level, images, player) {
+    constructor(x, y, game, level, images, player, iswater) {
 
         this.player = player
         this.game = game
@@ -27,11 +27,23 @@ class Bomb {
         this.ts = timestamp()
         this.animations = []
 
-        for(let i = BOMBSTART; i < BOMBSTART + 40; i++) {
+        this.iswater = iswater
+
+        let WATEROFFSET = 0
+
+        if(iswater) {
+            WATEROFFSET = 40
+        }
+
+        for(let i = BOMBSTART + WATEROFFSET; i < (BOMBSTART + 40 + WATEROFFSET); i++) {
             this.animations.push(i)
         }
         // boom
-        this.animations = this.animations.concat([41, 42, 43, 44, 45, 46])
+        if(iswater) {
+            this.animations = this.animations.concat([41, 42, 43, 44, SPLATSTART, SPLATSTART + 1])
+        } else {
+            this.animations = this.animations.concat([41, 42, 43, 44, 45, 46])
+        }
 
         this.frame = 0
         this.flipX = false
@@ -46,6 +58,7 @@ class Bomb {
         this.bouncecount = 1
         this.stopped = false
         this.visible = true
+
     }
 
     render(c) {
@@ -174,7 +187,11 @@ class Bomb {
                     this.y -= 30
                     this.yVel = -6
                     // kaboom
-                    this.player.kaboom()
+                    if(this.iswater ) {
+                        this.player.splat()
+                    } else {
+                        this.player.kaboom()
+                    }
 
                 }
                 if(this.frame === this.animations.length - 3 ) {
@@ -185,7 +202,7 @@ class Bomb {
                         y: py - 60,
                         w: 120,
                         h: 120
-                    })
+                    }, this.iswater)
                 }
             } else {
                 this.visible = false

@@ -61,7 +61,7 @@ class Player {
         this.bomb = null
         this.holding = false
 
-        this.inventory = [ BOMBSTART, SIGNSTART, SIGNSTART + 1 ]
+        this.inventory = [ BOMBSTART, BOMBSTART + 40, SIGNSTART, SIGNSTART + 1 ]
         this.selected = 0
     }
 
@@ -151,7 +151,7 @@ class Player {
         let r = this.level.interactive
         for(let i = 0; i < r.length; i++) {
             r[i].x = r[i].ox + this.level.viewport.x
-            if (this.overlapTest(c, r[i]) && this.imgs[r[i].t]['v']) {
+            if (this.overlapTest(c, r[i]) && r[i].e > 0) {
 
                 this.x = r[i].mx - 26 + this.level.viewport.x
                 this.xVel = 0
@@ -219,13 +219,13 @@ class Player {
                 let now = timestamp()
                 if(now > this.zts + 300) {
                     this.zts = now
-                    if(this.selected === 0) {
+                    if(this.selected < 2) {
                         if(this.holding) {
                             snd.throwit()
                             this.bomb.launch()
                             this.holding = false
                         } else {
-                            this.bomb = new Bomb(this.x, this.y, this.game, this.level, this.imgs, this)
+                            this.bomb = new Bomb(this.x, this.y, this.game, this.level, this.imgs, this, this.selected === 1)
                             this.holding = true
                             this.level.bombs.push(this.bomb)
                         }
@@ -236,14 +236,14 @@ class Player {
                 let now = timestamp()
                 if(now > this.xts + 300) {
                     this.xts = now
-                    this.selected += 1
-                    if(this.selected === 1) {
+                    if(this.selected < 2) {
                         if(this.holding) {
                             snd.throwit()
                             this.bomb.launch()
                             this.holding = false
                         }
                     }
+                    this.selected += 1
                     if(this.selected > this.inventory.length - 1) {
                         this.selected = 0
                     }
@@ -367,10 +367,12 @@ class Player {
         let r = this.getRect(this, 0, 0)
         c.strokeRect(r.x, r.y, r.w, r.h)*/
 
-        /*for(let sx = 0; sx < 9; sx++) {
-            let i = this.imgs[197 + sx]
-            drawImage(c, i, this.x + (sx * 100), this.y - 100, i.width, i.height, 0, false, false, true)
-        }*/
+        //for(let sy = 0; sy < 3; sy++) {
+            /*for(let sx = 0; sx < 9; sx++) {
+                let i = this.imgs[BOMBSTART + 40 + sx]
+                drawImage(c, i, this.x + (sx * 100), this.y - 100, i.width, i.height, 0, false, false, true)
+            }*/
+        //}
     }
 
     overlapTest(a, b) {
@@ -385,6 +387,10 @@ class Player {
 
     kaboom() {
         snd.explode()
+    }
+
+    splat() {
+
     }
 
     renderGUI(c) {

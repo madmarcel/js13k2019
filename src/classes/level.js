@@ -1,12 +1,15 @@
 import ParticleField from './particlefield'
 import { jsonCopy, fsrect, rect } from './util'
-import { INTERACTIVES, DOOR, TATTYBUSH, BUSH, FGTREE, palette, LOCKEDDOOR, SIGNSTART } from './data';
+import { INTERACTIVES, DOOR, TATTYBUSH, BUSH, FGTREE, palette, LOCKEDDOOR, SIGNSTART, HOLEINWALL } from './data';
 import Viewport from './viewport'
 import BombRevealTrigger from './bombrevealtrigger';
 
 class Level {
-    constructor(d, imgs, back) {
+    constructor(d, imgs, back, origin, origdata) {
         this.d = jsonCopy(d)
+        this.origin = 0 + origin
+
+        console.log('my origin is ', this.origin)
 
         this.imgs = [].concat(imgs)
         this.enemies = []
@@ -21,9 +24,11 @@ class Level {
         this.bombs = []
         this.bombtargets = []
 
-        this.imgs.forEach(i => {
+        this.origdata = origdata
+
+        /*this.imgs.forEach(i => {
             i['v'] = true
-        })
+        })*/
 
         this.build()
     }
@@ -80,21 +85,43 @@ class Level {
             this.u = this.d.u
         }
 
-        for(let fg = 0; fg < this.d.i[5].length; fg += 4) {
+        for(let fg = 0; fg < this.d.i[5].length; fg += 5) {
             // door
             // tatty bush / object
+
+            // ensure back has same set of hidden and visible bushes
             let p = this.d.i[5]
+            if(this.showBack && this.origdata) {
+                if(p[fg] === TATTYBUSH || p[fg] === BUSH) {
+                    let po = this.origdata[this.origin - 10].i[5]
+                    console.log('Setting a ', p[fg],'from', p[fg + 4], 'to', po[fg + 4])
+                    if(p[fg] === TATTYBUSH) {
+                        p[fg + 4] = 1
+                    } else {
+                        p[fg + 4] = po[fg + 4]
+                    }
+                    //console.log(po[fg + 4])
+                    if(p[fg] === BUSH && po[fg + 4] < 1) {
+                        p[fg + 2] += 200
+                    }
+                }
+            }
+
+            //let p = this.d.i[5]
             if(INTERACTIVES.includes(p[fg])) {
                 // there are no doors at the back
                 if(this.showBack && (p[fg] === DOOR || p[fg] === LOCKEDDOOR)) {
-                    // create sign for on the door
-                    let si = SIGNSTART - 2 + p[fg + 3]
-                    this.d.i[5] = this.d.i[5].concat(
-                        si,
-                        p[fg + 1],
-                        p[fg + 2],
-                        0
-                    )
+                    if(!this.d.donesigns) {
+                        // create sign for on the door
+                        let si = SIGNSTART - 1 + p[fg + 3]
+                        this.d.i[5] = this.d.i[5].concat(
+                            si,
+                            p[fg + 1],
+                            p[fg + 2],
+                            0,
+                            1
+                        )
+                    }
                 }
                 // locked door does nothing
                 if(!this.showBack && p[fg] === LOCKEDDOOR) continue;
@@ -108,13 +135,14 @@ class Level {
                         h: this.imgs[p[fg]].height,
                         d: p[fg + 3],
                         t: p[fg],
-                        mx: (p[fg + 1] - (this.imgs[p[fg]].width / 2) + 20) + ((this.imgs[p[fg]].width - 40) / 2)
+                        mx: (p[fg + 1] - (this.imgs[p[fg]].width / 2) + 20) + ((this.imgs[p[fg]].width - 40) / 2),
+                        e: p[fg + 4] // enabled?
                     }
                 )
+                console.log(this.interactive)
             }
         }
         if(this.showBack) {
-
             // 13  tree
             // 15  bush
             // 17  tatty bush
@@ -125,16 +153,26 @@ class Level {
             let movethese = []
 
             // loop over the layers
-            let inc = 4
-            for(let j = 5; j >= 0; j--) {
+            let inc = 5
+            for(let j = 5; j >= 2; j--) {
+                console.log('j', j, this.d.donesigns)
                 if(j < 5) {
                     inc = 3
                 }
                 let z = this.d.i[j]
                 for(let bg = z.length - inc; bg >= 0; bg -= inc) {
                     if(MOVETHESEONES.includes(z[bg])) {
-                        movethese.push([ z[bg], z[bg + 1], z[bg + 2] ])
-                        z.splice(bg, inc)
+                        // don't touch hidden stuff
+                        if(j === 5) {
+                            console.log('hiding a ', z[bg], z[bg + 4])
+                            z[bg + 4] = 0
+                        }
+                        if(!this.d.donesigns) {
+                            movethese.push([ z[bg], z[bg + 1], z[bg + 2] ])
+                            if(z[bg] !== TATTYBUSH) {
+                                z.splice(bg, inc)
+                            }
+                        }
                     }
                 }
             }
@@ -148,10 +186,11 @@ class Level {
                     this.d.i[1].push(n)
                 })
             })
+            this.d.donesigns = true
         }
 
         // triggers
-        if(this.d.t) {
+        if(this.d.t && !this.showBack) {
             let getImgRect = (x, y, i, no) => {
                 return {
                     x: x,
@@ -161,27 +200,41 @@ class Level {
                 }
             }
 
-            for(let i = 0; i < this.d.t.length; i += 5) {
+            for(let i = 0; i < this.d.t.length; i += 6) {
                 let tdef = this.d.t
-                if(tdef[i] === 0) {
-                    // bomb reveal trigger
+                if(tdef[i] < 2) {
+                    // normal/water bomb reveal trigger
                     // find target
 
                     let tlevel = tdef[i + 1]
                     let ttarget = tdef[i + 2]
 
-                    let ti = this.d.i[tlevel][ttarget * 4]
-                    let tx = this.d.i[tlevel][(ttarget * 4) + 1]
-                    let ty = this.d.i[tlevel][(ttarget * 4) + 2]
+                    let ti = this.d.i[tlevel][ttarget * 5]
+                    let tx = this.d.i[tlevel][(ttarget * 5) + 1]
+                    let ty = this.d.i[tlevel][(ttarget * 5) + 2]
+
+                    let tflag = (ttarget * 5) + 4
 
                     let rlevel = tdef[i + 3]
                     let rtarget = tdef[i + 4]
 
-                    let ri = this.d.i[rlevel][rtarget * 4]
+                    //let ri = this.d.i[rlevel][rtarget * 5]
+
+                    let rflag = (rtarget * 5) + 4
+
+                    let iv = tdef[i + 5]
 
                     // add to bombtargets
-                    this.bombtargets.push(new BombRevealTrigger(getImgRect(tx, ty, this.imgs, ti), this.imgs, ti, ri))
+                    this.bombtargets.push(new BombRevealTrigger(getImgRect(tx, ty, this.imgs, ti), this.d.i, tlevel, tflag, rlevel, rflag, tdef[i] === 1, this.interactive[iv]))
                 }
+            }
+        }
+
+        // toggle the signs
+        for(let fg = 0; fg < this.d.i[5].length; fg += 5) {
+            let p = this.d.i[5]
+            if(p[fg] > SIGNSTART && p[fg] < SIGNSTART + 9) {
+                p[fg + 4] = this.showBack ? 1 : 0
             }
         }
 
@@ -204,9 +257,9 @@ class Level {
 
     draw(c, i, x, y) {
         if(!i) return
-        if(!i['v']) {
+        /*if(!i['v']) {
             return
-        }
+        }*/
         c.drawImage(i, x - i.width * 0.5, y, i.width, i.height)
     }
 
@@ -234,9 +287,17 @@ class Level {
             if(j > 4) {
                 inc = 4
             }
+            if(j === 5) {
+                inc = 5
+            }
             let z = this.d.i[j]
             let l = z.length
             for(let bg = 0; bg < l; bg += inc) {
+
+                // skip hidden images
+                if(j === 5) {
+                    if(z[bg + 4] < 1) continue
+                }
 
                 if(this.showBack) {
                     // only draw some images
@@ -286,12 +347,12 @@ class Level {
         }
     }
 
-    explosion(rect) {
+    explosion(rect, iswater) {
         //rect.ox = rect.x
         //this.rects.push(rect)
 
         for(let i = 0; i < this.bombtargets.length; i++) {
-            this.bombtargets[i].check(rect)
+            this.bombtargets[i].check(rect, iswater)
         }
     }
 }

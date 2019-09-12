@@ -163,7 +163,8 @@ const HOLEINWALL = 48
 const INTERACTIVES = [ DOOR, TATTYBUSH, HOLEINWALL, LOCKEDDOOR ]
 const LENSSTART = PLAYERPARTS + 44
 const BOMBSTART = LENSSTART + 80
-const SIGNSTART = BOMBSTART + 40
+const SIGNSTART = BOMBSTART + 80
+const SPLATSTART = SIGNSTART + 10
 
 const palette =  [
     '#000',
@@ -221,10 +222,11 @@ const leveldata = [
             ],
             [  // images - middle 5
                 // foreground water
-                5, 1064 + 150,716, 0,
-                16, 195, 590, 0,
-                18, 390, 590, 0, // tatty bush
-                12, 700, 550, 1  // door
+                5, 1064 + 150,716, 0, 1,
+                16, 195, 590, 0, 1,
+                18, 390, 590, 0, 0, // tatty bush
+                18, 390, 590, 0, 1, //  bush
+                12, 700, 550, 1, 1// door
             ],
             [ // foreground
                 1, 1076 / 2, 768 - 65, 1
@@ -280,18 +282,20 @@ const leveldata = [
                 16, 2300, 590
             ],
             [  // images - middle 5
-                18, 250, 590, 1,// tatty bush
-                12, 740, 550, 2, // door
-                50, 2550, 550, 6, // locked door
-                16, 2700, 590, 0
+                16, 250, 590, 1, 1,  // bush visible
+                18, 250, 590, 1, 0,  // tatty bush // hidden
+                12, 740, 550, 2, 1, // door
+                50, 2550, 550, 6, 1, // locked door
+                16, 2700, 590, 0, 1
             ],
             [ // foreground
                 0, 1360 / 2, 768 - 65, 1,
-                0, 1360 + 1360 / 2, 768 - 65, 1,
+                0, 1360 + 1360 / 2, 768 - 65, 1
             ]
         ],
         p: [],
-        u: [ 1366  / 2, 580 ]
+        u: [ 1366  / 2, 580 ],
+        t: [ 1, 5, 0, 5, 1, 0 ]
     },
     {
         // inside big house
@@ -315,8 +319,8 @@ const leveldata = [
                 30, 460, 300
             ],
             [  // images - middle 5
-                12, 740, 550, 1, // door
-                12, 980, 245, 3 // door
+                12, 740, 550, 1, 1, // door
+                12, 980, 245, 3, 1 // door
             ],
             [ // foreground
                 // ceiling
@@ -363,11 +367,11 @@ const leveldata = [
                 35, 850, 250
             ],
             [  // images - middle 5
-                12, 980, 245, 2, // door
+                12, 980, 245, 2, 1,// door
                 // crack in the wall
-                47, 690, 210, 0,
+                47, 690, 210, 0, 1,
                 // hole in the wall, hidden
-                48, 690, 200, 4
+                48, 690, 200, 4, 0
             ],
             [ // foreground
                 // ceiling
@@ -391,7 +395,7 @@ const leveldata = [
         p: [],
         u: [ 1366  / 2, 580 ],
         // trigger
-        // type: 0 - reveal door using bomb
+        // type: 0 - reveal door using normal bomb, type 1 - reveal using waterbomb
         // interactive
         // level: 5
         // target: 1
@@ -399,7 +403,7 @@ const leveldata = [
         // level: 5
         // target: 2
         // this will also hide the door
-        t: [ 0, 5, 1, 5, 2 ]
+        t: [ 0, 5, 1, 5, 2, 1 ]
     },
     {
         // secret room in big house
@@ -422,8 +426,8 @@ const leveldata = [
             ],
             [  // images - middle 5
                 // hole in the wall
-                48, 690, 200, 3,
-                19, 1560, 602 - 461 + 50, 0
+                48, 690, 200, 3, 1,
+                19, 1560, 602 - 461 + 50, 0, 1
             ],
             [ // foreground
 
@@ -447,7 +451,7 @@ const leveldata = [
         ],
         p: [],
         u: [ 1366  / 2, 580 ]
-    },
+    }
 ]
 
 export {
@@ -464,5 +468,6 @@ export {
     LENSSTART,
     BOMBSTART,
     LOCKEDDOOR,
-    SIGNSTART
+    SIGNSTART,
+    SPLATSTART
 }

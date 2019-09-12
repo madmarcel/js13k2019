@@ -1,7 +1,7 @@
 import { leveldata, LENSSTART } from './data'
 import Level from './level'
 import { generateImages } from './dataloader'
-import { fsrect, text, rect, timestamp, drawImage } from './util'
+import { fsrect, text, rect, timestamp, drawImage, jsonCopy } from './util'
 import Keyboarder from './keyboard'
 import Player from './player'
 import * as snd from './sound'
@@ -30,6 +30,17 @@ class Game {
         this.nextLevel = -1
         this.lx = 0
         this.ly = 0
+
+        this.data = jsonCopy(leveldata)
+
+        let l = this.data.length
+
+        for(let i = 0; i < 10; i++) {
+            this.data.push({}) // placeholder data
+        }
+        for(let i = 0; i < l; i++) {
+            this.data[i + 10] = this.data[i]
+        }
     }
 
     start() {
@@ -37,7 +48,7 @@ class Game {
        setTimeout(() => {
             images = generateImages()
             const startlevel = 4
-            self.level = new Level(leveldata[startlevel], images, false)
+            self.level = new Level(this.data[startlevel], images, false, startlevel)
             self.state = STATE.TITLE
        }, 25)
     }
@@ -114,7 +125,7 @@ class Game {
     pressAnyKey(nextState, nextLevel) {
         if(this.kb.isAnyKeyDown()) {
             this.state = nextState
-            this.level = new Level(leveldata[nextLevel], images, false)
+            this.level = new Level(this.data[nextLevel], images, false, nextLevel)
             //this.level.startLoad()
             snd.create()
             //snd.playMusic()
@@ -123,12 +134,18 @@ class Game {
     }
 
     changeLevel(i, showBack, doLens) {
-        //console.log('Loading new level ', i, showBack)
+        console.log('Loading new level ', i, showBack)
         if(this.level.showBack) {
             showBack = false
         }
         if(!doLens) {
-            this.level = new Level(leveldata[i], images, showBack)
+            if(showBack) {
+                console.log(i)
+                i += 10
+            }
+            console.log('Storing that last level in', this.level.origin)
+            this.data[this.level.origin] = jsonCopy(this.level.d)
+            this.level = new Level(this.data[i], images, showBack, i, this.data)
             this.player.level = this.level
             this.player.depth = 6
             this.nextLevel = -1
@@ -146,7 +163,8 @@ class Game {
     }
 
     completeLens() {
-        this.level = new Level(leveldata[this.nextLevel], images, false)
+        this.data[this.level.origin] = jsonCopy(this.level.d)
+        this.level = new Level(this.data[this.nextLevel], images, false, this.nextLevel)
         this.level.startLoad()
         this.player.showBack = false
         this.player.showFront = true

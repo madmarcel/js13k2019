@@ -1,17 +1,21 @@
 import { overlapTest } from "./util"
 
 class BombRevealTrigger {
-    constructor(rect, imgs, sourceimg, targetimg) {
+    constructor(rect, data, targetlevel, targetflag, reveallevel, revealflag, water, interactive) {
         this.r = rect
-        this.source = imgs[sourceimg]
-        this.target = imgs[targetimg]
+        this.data = data
+        this.targetlevel = targetlevel
+        this.targetflag = targetflag
+        this.reveallevel = reveallevel
+        this.revealflag = revealflag
         this.done = false
-
-        this.source['v'] = true
-        this.target['v'] = false
+        this.iswater = water
+        this.interactive = interactive
     }
 
-    check(bombexplosionrect) {
+    check(bombexplosionrect, iswater) {
+        if(this.iswater !== iswater) return
+
         if(!this.done && overlapTest(this.r, bombexplosionrect)) {
             this.activate()
         }
@@ -19,8 +23,9 @@ class BombRevealTrigger {
 
     activate() {
         this.done = true
-        this.source['v'] = false
-        this.target['v'] = true
+        this.data[this.targetlevel][this.targetflag] = 0
+        this.data[this.reveallevel][this.revealflag] = 1
+        this.interactive.e = 1
     }
 }
 
