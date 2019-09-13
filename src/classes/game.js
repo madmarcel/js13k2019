@@ -148,8 +148,8 @@ class Game {
             this.level = new Level(this.data[nextLevel], images, false, nextLevel)
             //this.level.startLoad()
             snd.create()
-            //snd.playMusic()
-            //snd.goFront()
+            snd.playMusic()
+            snd.goFront()
         }
     }
 

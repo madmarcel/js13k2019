@@ -114,6 +114,21 @@ class Level {
                 if(this.showBack && (p[fg] === DOOR || p[fg] === LOCKEDDOOR)) {
                     if(!this.d.donesigns) {
                         // create sign for on the door
+                        //BOMBSTART + 40, 1440 + 115, 602 - 481 + 50 + 150 + 10, 1, 1
+
+                        /*console.log(this.d.s)
+                        console.log(!this.d.s) */
+                        //console.log('-', p[fg])
+
+                        if(!this.d.s) {
+                            this.d.s = []
+                        }
+                        let si = SIGNSTART + p[fg + 3]
+                        this.d.s = this.d.s.concat( si, p[fg + 1], p[fg + 2], 1, 1);
+
+                        //console.log(this.d.s)
+
+                        /*
                         let si = SIGNSTART - 1 + p[fg + 3]
                         this.d.i[5] = this.d.i[5].concat(
                             si,
@@ -121,7 +136,7 @@ class Level {
                             p[fg + 2],
                             0,
                             1
-                        )
+                        )*/
                     }
                 }
                 // locked door does nothing
@@ -241,9 +256,10 @@ class Level {
 
         // items stuff
         if(this.d.s && !this.d.donestuff) {
-            for(let fg = 0; fg < this.d.s.length; fg += 4) {
+            for(let fg = 0; fg < this.d.s.length; fg += 5) {
                 let p = this.d.s
                 let si = p[fg]
+
                 /*this.d.i[5] = this.d.i[5].concat(
                     si,
                     p[fg + 1],
@@ -358,6 +374,14 @@ class Level {
                     p.render(c)
                 })
                 if(player && player.depth === j) {
+
+                    for(let b = 0; b < this.pickups.length; b++) {
+                        let j = this.pickups[b]
+                        if(j.v > 0) {
+                            this.draw(c, this.imgs[j.id], j.ox + this.viewport.x, j.y)
+                        }
+                    }
+
                     player.render(c)
                 }
             }
@@ -366,12 +390,12 @@ class Level {
                 this.bombs[b].render(c)
             }
 
-            for(let b = 0; b < this.pickups.length; b++) {
+            /*for(let b = 0; b < this.pickups.length; b++) {
                 let j = this.pickups[b]
                 if(j.v > 0) {
                     this.draw(c, this.imgs[j.id], j.ox + this.viewport.x, j.y)
                 }
-            }
+            }*/
 
             if(player) {
                 player.renderGUI(c)
