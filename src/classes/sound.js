@@ -10,21 +10,21 @@ let cuedTime = 0;
 let musicVolume = 1;
 const sounds = {};
 const standard = {
-  crash: [.6,],
-  hat:   [  ,  ,.7,.5,  ,  ,.7,  ,  ,  ,.7,  ,  ,  ,  ,  ,],
-  ride:  [  ,  ,  ,  ,.6,  ,  ,  ,.6,  ,  ,  ,.6,  ,  ,  ,],
-  snare: [  ,  ,  ,  , 1,  ,  , 1,  ,  ,  ,  ,.2,.2, 1,.2,],
-  foot:  [ 1,  ,  ,  ,  ,  ,  ,  ,.2,  , 1, 1,.2,  ,  ,  ,],
-  wiggle:[  ,  ,  ,  ,.4,  ,  ,  ,.6,.6,.6,.6,.8,  ,.8,  ,],
-  geet:  [ 1,  ,  ,  ,  ,  ,  ,  ,  ,  ,.4,  ,  ,  ,  ,  ,],
+  'crash': [.6,],
+  'hat':   [  ,  ,.7,.5,  ,  ,.7,  ,  ,  ,.7,  ,  ,  ,  ,  ,],
+  'ride':  [  ,  ,  ,  ,.6,  ,  ,  ,.6,  ,  ,  ,.6,  ,  ,  ,],
+  'snare': [  ,  ,  ,  , 1,  ,  , 1,  ,  ,  ,  ,.2,.2, 1,.2,],
+  'foot':  [ 1,  ,  ,  ,  ,  ,  ,  ,.2,  , 1, 1,.2,  ,  ,  ,],
+  'wiggle':[  ,  ,  ,  ,.4,  ,  ,  ,.6,.6,.6,.6,.8,  ,.8,  ,],
+  'geet':  [ 1,  ,  ,  ,  ,  ,  ,  ,  ,  ,.4,  ,  ,  ,  ,  ,],
 };
 const bridge = {
-  crash: [ 1],
-  ride:  [  ,  ,  ,  ,.6,  ,  ,  ,.6,  ,  ,  ,.6,  ,  ,  ,],
-  foot:  [ 1,  ,  ,  , 1,  ,  ,  , 1,  ,  ,  , 1,  ,  ,  ,],
-  snare: [  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,.6,.4,.8,.4,],
-  mid:   [ 1,  ,  , 1,  ,  , 1,  ,  ,  , 1,  ,  ,  ,  ,  ,],
-  wiggle:[ 1,  ,  , 1,  ,  , 1,  ,  ,  , 1,  ,  ,  , 1,  ,],
+  'crash': [ 1],
+  'ride':  [  ,  ,  ,  ,.6,  ,  ,  ,.6,  ,  ,  ,.6,  ,  ,  ,],
+  'foot':  [ 1,  ,  ,  , 1,  ,  ,  , 1,  ,  ,  , 1,  ,  ,  ,],
+  'snare': [  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,.6,.4,.8,.4,],
+  'mid':   [ 1,  ,  , 1,  ,  , 1,  ,  ,  , 1,  ,  ,  ,  ,  ,],
+  'wiggle':[ 1,  ,  , 1,  ,  , 1,  ,  ,  , 1,  ,  ,  , 1,  ,],
 }
 const buffSz = 22050;
 const segments = 16;
@@ -128,7 +128,7 @@ const create = () => {
     vol = 1,
     hzTo = hz,
     volTo = 1e-4,
-    type = 'sine'
+    type = WAVES.SINE
   ) => {
     const osc = acx.createOscillator();
     const gainr = acx.createGain();
@@ -256,7 +256,7 @@ const goFront = () => {
 const testSounds = {
   crunch: () => {
     sounds.white(acx.currentTime, 100, 1, 12000, .3);
-    sounds.white(acx.currentTime, 6000, 1, 8000, .1);  
+    sounds.white(acx.currentTime, 6000, 1, 8000, .1);
   },
   blup: () => {
     sounds.slider(acx.currentTime, 440, .4, 6, 600, 1e-6, WAVES.SQUARE);

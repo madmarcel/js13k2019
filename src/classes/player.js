@@ -29,6 +29,8 @@ class Player {
         this.ats = now
         this.zts = now
         this.xts = now
+        this.mts = now
+        this.cts = now
         this.showBack = false
         this.showFront = false
 
@@ -61,8 +63,10 @@ class Player {
         this.bomb = null
         this.holding = false
 
-        this.inventory = [ BOMBSTART, BOMBSTART + 40, SIGNSTART, SIGNSTART + 1 ]
+        this.inventory = [ BOMBSTART ]
         this.selected = 0
+
+        this.mute = true
     }
 
     goRight() {
@@ -84,9 +88,9 @@ class Player {
             this.yVel -= 3.5
         } else {
             this.jumping = true
-            //snd.jump()
-            const fx = Object.values(snd.testSounds);
-            fx[~~(Math.random() * fx.length)]();
+            snd.jump()
+            //const fx = Object.values(snd.testSounds);
+            //fx[~~(Math.random() * fx.length)]();
         }
     }
 
@@ -141,6 +145,26 @@ class Player {
         }
         this.yVel = vy
         p.y += vy
+    }
+
+    checkPickups() {
+        let p = this
+        let c = this.getRect(p, 0, 0) //{ x: p.x, y: p.y, w: p.w, h: p.h }
+        let r = this.level.pickups
+        let match = false
+        for(let i = 0; i < r.length; i++) {
+            r[i].x = r[i].ox + this.level.viewport.x
+            if (this.overlapTest(c, r[i]) && r[i].e > 0) {
+                this.inventory = this.inventory.concat(r[i].id)
+                r[i].e = 0
+                r[i].v = 0
+                snd.testSounds.blup()
+                match = true
+            }
+        }
+        if(!match) {
+            snd.testSounds.nah()
+        }
     }
 
     checkInteractive() {
@@ -249,6 +273,28 @@ class Player {
                     if(this.selected > this.inventory.length - 1) {
                         this.selected = 0
                     }
+                }
+            }
+
+            if(k.m()) {
+                let now = timestamp()
+                if(now > this.mts + 300) {
+                    if(this.mute) {
+                        snd.pauseMusic()
+                    } else {
+                        snd.playMusic()
+                        snd.goFront()
+                    }
+                    this.mute = !this.mute
+                    this.mts = now
+                }
+            }
+
+            if(k.c()) {
+                let now = timestamp()
+                if(now > this.cts + 300) {
+                    this.checkPickups()
+                    this.cts = now
                 }
             }
         }

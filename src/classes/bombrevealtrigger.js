@@ -14,11 +14,14 @@ class BombRevealTrigger {
     }
 
     check(bombexplosionrect, iswater) {
-        if(this.iswater !== iswater) return
+        if(this.iswater !== iswater) return false
 
         if(!this.done && overlapTest(this.r, bombexplosionrect)) {
             this.activate()
+            return true
         }
+
+        return false
     }
 
     activate() {

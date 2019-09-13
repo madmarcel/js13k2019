@@ -33,11 +33,19 @@ class Keyboarder {
     }
 
     z() {
-        return this.isDown(this.KEYS.Z)
+        return this.isDown(this.KEYS['Z'])
     }
 
     x() {
-        return this.isDown(this.KEYS.X)
+        return this.isDown(this.KEYS['X'])
+    }
+
+    m() {
+        return this.isDown(this.KEYS['M'])
+    }
+
+    c() {
+        return this.isDown(this.KEYS['C'])
     }
 
     isDown(key) {

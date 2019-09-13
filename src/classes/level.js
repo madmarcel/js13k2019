@@ -3,13 +3,12 @@ import { jsonCopy, fsrect, rect } from './util'
 import { INTERACTIVES, DOOR, TATTYBUSH, BUSH, FGTREE, palette, LOCKEDDOOR, SIGNSTART, HOLEINWALL } from './data';
 import Viewport from './viewport'
 import BombRevealTrigger from './bombrevealtrigger';
+import { transition } from './sound'
 
 class Level {
     constructor(d, imgs, back, origin, origdata) {
         this.d = jsonCopy(d)
         this.origin = 0 + origin
-
-        console.log('my origin is ', this.origin)
 
         this.imgs = [].concat(imgs)
         this.enemies = []
@@ -23,6 +22,8 @@ class Level {
         this.loading = false
         this.bombs = []
         this.bombtargets = []
+
+        this.pickups = []
 
         this.origdata = origdata
 
@@ -94,7 +95,7 @@ class Level {
             if(this.showBack && this.origdata) {
                 if(p[fg] === TATTYBUSH || p[fg] === BUSH) {
                     let po = this.origdata[this.origin - 10].i[5]
-                    console.log('Setting a ', p[fg],'from', p[fg + 4], 'to', po[fg + 4])
+                    //console.log('Setting a ', p[fg],'from', p[fg + 4], 'to', po[fg + 4])
                     if(p[fg] === TATTYBUSH) {
                         p[fg + 4] = 1
                     } else {
@@ -139,7 +140,7 @@ class Level {
                         e: p[fg + 4] // enabled?
                     }
                 )
-                console.log(this.interactive)
+                //console.log(this.interactive)
             }
         }
         if(this.showBack) {
@@ -155,7 +156,7 @@ class Level {
             // loop over the layers
             let inc = 5
             for(let j = 5; j >= 2; j--) {
-                console.log('j', j, this.d.donesigns)
+                //console.log('j', j, this.d.donesigns)
                 if(j < 5) {
                     inc = 3
                 }
@@ -164,7 +165,7 @@ class Level {
                     if(MOVETHESEONES.includes(z[bg])) {
                         // don't touch hidden stuff
                         if(j === 5) {
-                            console.log('hiding a ', z[bg], z[bg + 4])
+                            //console.log('hiding a ', z[bg], z[bg + 4])
                             z[bg + 4] = 0
                         }
                         if(!this.d.donesigns) {
@@ -236,6 +237,40 @@ class Level {
             if(p[fg] > SIGNSTART && p[fg] < SIGNSTART + 9) {
                 p[fg + 4] = this.showBack ? 1 : 0
             }
+        }
+
+        // items stuff
+        if(this.d.s && !this.d.donestuff) {
+            for(let fg = 0; fg < this.d.s.length; fg += 4) {
+                let p = this.d.s
+                let si = p[fg]
+                /*this.d.i[5] = this.d.i[5].concat(
+                    si,
+                    p[fg + 1],
+                    p[fg + 2],
+                    0,
+                    1
+                )*/
+
+                if(p[fg + 3] > 0) {
+                    this.pickups.push(
+                        {
+                            id: si,
+                            ox: p[fg + 1],
+                            x: p[fg + 1],
+                            y: p[fg + 2],
+                            w: this.imgs[si].width / 2,
+                            h: this.imgs[si].height / 2,
+                            e: p[fg + 3],
+                            v: p[fg + 3]
+                        }
+                    )
+                }
+            }
+
+            //console.log(this.pickups)
+
+            //this.d.donestuff = true
         }
 
         this.viewport = new Viewport(this.d.v[0], this.d.v[1])
@@ -331,15 +366,22 @@ class Level {
                 this.bombs[b].render(c)
             }
 
+            for(let b = 0; b < this.pickups.length; b++) {
+                let j = this.pickups[b]
+                if(j.v > 0) {
+                    this.draw(c, this.imgs[j.id], j.ox + this.viewport.x, j.y)
+                }
+            }
+
             if(player) {
                 player.renderGUI(c)
             }
 
-            /*this.rects.forEach(r => {
+            /*this.pickups.forEach(r => {
                 c.strokeStyle = 'red'
-                c.strokeRect(r.x, r.y, r.w, r.h)
-            })
-
+                c.strokeRect(r.x + this.viewport.x, r.y, r.w, r.h)
+            })*/
+            /*
             this.interactive.forEach(r => {
                 c.strokeStyle = 'yellow'
                 c.strokeRect(r.x, r.y, r.w, r.h)
@@ -347,12 +389,16 @@ class Level {
         }
     }
 
-    explosion(rect, iswater) {
+    explosion(rect, iswater, game) {
         //rect.ox = rect.x
         //this.rects.push(rect)
 
         for(let i = 0; i < this.bombtargets.length; i++) {
-            this.bombtargets[i].check(rect, iswater)
+            if(this.bombtargets[i].check(rect, iswater)) {
+                setTimeout(() => {
+                   transition()
+                }, 300)
+            }
         }
     }
 }

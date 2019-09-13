@@ -47,7 +47,7 @@ class Game {
        let self = this
        setTimeout(() => {
             images = generateImages()
-            const startlevel = 4
+            const startlevel = 0
             self.level = new Level(this.data[startlevel], images, false, startlevel)
             self.state = STATE.TITLE
        }, 25)
@@ -105,11 +105,31 @@ class Game {
             case STATE.TITLE:
                 // render titlescreen
                 this.level.render(c)
-                rect(c, '#000', 536, 136, 390, 300, 0.4)
+                rect(c, '#000', 536, 136, 440, 600, 0.4)
                 text(c, 'Behind the Scenery', 1366/2 - 100, 768/2 - 170, '#f5edba', 32)
                 text(c, 'by madmarcel for js13k 2019', 1366/2 - 60, 768/2 - 140, '#f5edba', 16)
                 text(c, 'music and sfx by justinfunstain', 1366/2 - 60, 768/2 - 110, '#f5edba', 16)
                 text(c, 'press any key to start', 1366/2 - 60, 768/2, '#f5edba', 28)
+
+                let o = 768/2 + 60
+
+                let sent = [
+                    'Controls:',
+                    '',
+                    'Arrow keys - move',
+                    'Space - jump',
+                    'Up - enter door/jump over',
+                    'z - use item',
+                    'x - toggle item',
+                    'c - pickup item',
+                    '',
+                    'm - mute music'
+                ]
+
+                sent.forEach(t => {
+                    text(c, t, 1366/2 - 60, o, '#f5edba', 14)
+                    o += 25
+                })
             break
             case STATE.PLAY:
                 this.level.render(c, this.player)
@@ -134,16 +154,13 @@ class Game {
     }
 
     changeLevel(i, showBack, doLens) {
-        console.log('Loading new level ', i, showBack)
         if(this.level.showBack) {
             showBack = false
         }
         if(!doLens) {
             if(showBack) {
-                console.log(i)
                 i += 10
             }
-            console.log('Storing that last level in', this.level.origin)
             this.data[this.level.origin] = jsonCopy(this.level.d)
             this.level = new Level(this.data[i], images, showBack, i, this.data)
             this.player.level = this.level

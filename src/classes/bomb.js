@@ -202,7 +202,7 @@ class Bomb {
                         y: py - 60,
                         w: 120,
                         h: 120
-                    }, this.iswater)
+                    }, this.iswater, this.game)
                 }
             } else {
                 this.visible = false
