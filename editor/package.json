@@ -44,7 +44,7 @@
     "gulp-sourcemaps": "^2.6.4",
     "gulp-webpack": "^1.5.0",
     "gulp-zip": "^4.2.0",
-    "handlebars": "^4.0.11",
+    "handlebars": "^4.3.0",
     "node-static": "^0.7.10",
     "rollup-plugin-local-resolve": "^1.0.7",
     "rollup-stream": "^1.24.1",
