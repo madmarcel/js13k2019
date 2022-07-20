@@ -63,6 +63,6 @@
     "html-minifier": "^3.5.20",
     "pretty-bytes-cli": "^2.0.0",
     "run-sequence": "^2.2.1",
-    "terser": "^3.8.2"
+    "terser": "^4.8.1"
   }
 }
